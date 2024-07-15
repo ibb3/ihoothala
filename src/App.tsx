@@ -7,8 +7,8 @@ const App = () => {
   const [points, setPoints] = useState(29857775);
   const [energy, setEnergy] = useState(2532);
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
-  const pointsToAdd = 100;
-  const energyToReduce = 100;
+  const pointsToAdd = 12;
+  const energyToReduce = 12;
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (energy - energyToReduce < 0) {
