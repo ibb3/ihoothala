@@ -10,43 +10,23 @@ const App = () => {
   const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
   const [showShopMessage, setShowShopMessage] = useState<boolean>(false);
   const [leaderboard, setLeaderboard] = useState<{ user: string, points: number }[]>([]);
-  
   const pointsToAdd = 1; // Points added per click
   const energyToReduce = 1; // Reduced energy per click
-  const maxEnergy = 6500; // Maximum energy capacity
-  const restoreRate = 1; // Points restored per interval
-  const restoreInterval = 3825; // Milliseconds
 
   useEffect(() => {
+    // Retrieve stored points from local storage
     const storedPoints = parseInt(localStorage.getItem('points') || '0', 10);
     setPoints(storedPoints);
 
-    const storedEnergy = parseInt(localStorage.getItem('energy') || '0', 10);
-    setEnergy(storedEnergy);
-
+    // Retrieve leaderboard from local storage
     const storedLeaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
     setLeaderboard(storedLeaderboard);
 
-    // Retrieve last saved timestamp
-    const lastSaveTime = parseInt(localStorage.getItem('lastSaveTime') || '0', 10);
-
-    if (lastSaveTime) {
-      const now = Date.now();
-      const elapsedTime = now - lastSaveTime;
-
-      // Calculate energy increase based on elapsed time
-      const energyIncrease = Math.floor((elapsedTime / restoreInterval) * restoreRate);
-      setEnergy(prevEnergy => Math.min(prevEnergy + energyIncrease, maxEnergy));
-    }
-
     const interval = setInterval(() => {
-      setEnergy(prevEnergy => Math.min(prevEnergy + restoreRate, maxEnergy));
-    }, restoreInterval);
+      setEnergy((prevEnergy) => Math.min(prevEnergy + 1, 6500));
+    }, 3825); // Updated the interval to 3825 ms (15% faster)
 
-    return () => {
-      clearInterval(interval);
-      localStorage.setItem('lastSaveTime', Date.now().toString()); // Save current time when component unmounts
-    };
+    return () => clearInterval(interval);
   }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -67,7 +47,7 @@ const App = () => {
   };
 
   const handleAnimationEnd = (id: number) => {
-    setClicks(prevClicks => prevClicks.filter(click => click.id !== id));
+    setClicks((prevClicks) => prevClicks.filter(click => click.id !== id));
   };
 
   const updateLeaderboard = (newPoints: number) => {
@@ -132,7 +112,7 @@ const App = () => {
                 <img src={highVoltage} width={44} height={44} alt="High Voltage" />
                 <div className="ml-2 text-left">
                   <span className="text-white text-2xl font-bold block">{energy}</span>
-                  <span className="text-white text-large opacity-75">/ {maxEnergy}</span>
+                  <span className="text-white text-large opacity-75">/ 6500</span>
                 </div>
               </div>
             </div>
@@ -151,7 +131,7 @@ const App = () => {
             </div>
           </div>
           <div className="w-full bg-[#f9c035] rounded-full mt-4">
-            <div className="bg-gradient-to-r from-[#f3c45a] to-[#fffad0] h-4 rounded-full" style={{ width: `${(energy / maxEnergy) * 100}%` }}></div>
+            <div className="bg-gradient-to-r from-[#f3c45a] to-[#fffad0] h-4 rounded-full" style={{ width: `${(energy / 6500) * 100}%` }}></div>
           </div>
         </div>
 
@@ -181,9 +161,7 @@ const App = () => {
               <h2 className="text-black text-xl font-bold mb-4">Leaderboard</h2>
               <ul>
                 {leaderboard.map((entry, index) => (
-                  <li key={index} className="mb-2">
-                    {entry.user}: {entry.points.toLocaleString()}
-                  </li>
+                  <li key={index}>{entry.user}: {entry.points} points</li>
                 ))}
               </ul>
               <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded" onClick={toggleLeaderboard}>Close</button>
@@ -200,6 +178,7 @@ const App = () => {
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
