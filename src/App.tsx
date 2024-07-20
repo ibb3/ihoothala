@@ -10,8 +10,8 @@ const App = () => {
   const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
   const [showShopMessage, setShowShopMessage] = useState<boolean>(false);
   const [leaderboard, setLeaderboard] = useState<{ user: string, points: number }[]>([]);
-  const pointsToAdd = 1; // Changed value to 1
-  const energyToReduce = 12;
+  const pointsToAdd = 1; // Points added per click
+  const energyToReduce = 1; // Reduced energy per click
 
   useEffect(() => {
     // Retrieve stored points from local storage
@@ -24,7 +24,7 @@ const App = () => {
 
     const interval = setInterval(() => {
       setEnergy((prevEnergy) => Math.min(prevEnergy + 1, 6500));
-    }, 100);
+    }, 3825); // Updated the interval to 3825 ms (15% faster)
 
     return () => clearInterval(interval);
   }, []);
@@ -149,7 +149,7 @@ const App = () => {
                 }}
                 onAnimationEnd={() => handleAnimationEnd(click.id)}
               >
-                {pointsToAdd} {/* Changed to use pointsToAdd */}
+                {pointsToAdd}
               </div>
             ))}
           </div>
@@ -172,8 +172,8 @@ const App = () => {
         {showShopMessage && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-20">
             <div className="bg-white p-4 rounded-lg w-80">
-              <h2 className="text-black text-xl font-bold">Shop</h2>
-              <p className="text-black mt-2">Coming Soon</p>
+              <h2 className="text-black text-xl font-bold mb-4">Shop</h2>
+              <p className="text-black">Coming Soon</p>
               <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded" onClick={() => setShowShopMessage(false)}>Close</button>
             </div>
           </div>
